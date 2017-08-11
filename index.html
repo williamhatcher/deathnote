@@ -1,0 +1,116 @@
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Latest compiled and minified CSS -->
+	<!--suppress HtmlUnknownTarget -->
+	<link rel="stylesheet" href='css/bootstrap.min.css'>
+	<!-- Latest jQuery -->
+	<script src='js/jquery.min.js'></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<!--suppress HtmlUnknownTarget -->
+	<script src="js/bootstrap.min.js"></script>
+	<title>ToS Death Note Generator</title>
+</head>
+<body>
+<h1>Town of Salem Death Note Generator</h1>
+<div class="btn-group" style="padding-bottom:1%;">
+	<a role="button" class="btn disabled btn-primary" href="/">Death Notes</a>
+	<a role="button" class="btn btn-default" href="/wills.html">Last Wills</a>
+</div>
+<form class="form-inline">
+	<select id="preview" class="selectpicker form-control" data-live-search="true" title="Please select a deathnote" onchange="change_deathnote(this.value)">
+		<!-- Populate deathnote list here -->
+	</select>
+    <div class="input-group">
+        <select id="role" class="selectpicker form-control" data-live-search="true" title="Please select a role ..." onchange="change_verb(this.value)">
+			<!-- Populate role list here -->
+        </select>
+		<span class="input-group-addon" id="verb"></span>
+    </div>
+</form>
+<h3>Tap or Click inside textbox to copy to clipboard. <span id="copied" class="text-success	"></span></h3>
+<textarea id="note" readonly="readonly" cols="57" onclick="copy_dn(this)" title="Deathnote Here"></textarea>
+<script>
+	var deathnotes = [
+		// Format:
+		// ["Text {0} ... {1}", "number of rows textbox should be"]
+		// {0} will be replaced with the role
+		// {1} will be replaced with the verb
+		["To Whom it May Concern,\n\nWe apologize for any inconvenience, but it appears you have been {1} by the [{0}].\n\nIf you wish to come back to life, dial our nearest [RETRIBUTIONIST] at 1-800-RET-LIFE.\n\nIf you wish to complain, call customer service at 1-800-MEDIUMS. Thank you for your cooperation.\n\nSincerely,\n[{0}]\nhttp://deathnote.link","14"],
+		["Hello!","2"]
+	];
+	var killers = {
+		"MAFIA": "killed",
+		"SERIAL KILLER": "stabbed",
+		"ARSONIST": "incinerated",
+		"GODFATHER": "killed",
+		"MAFIOSO": "killed",
+		"WEREWOLF": "mauled",
+		"VAMPIRE": "bitten",
+		"JAILOR": "executed",
+		"VAMPIRE HUNTER": "staked",
+		"VETERAN": "shot",
+		"VIGILANTE": "shot"
+	};
+	var preview = document.getElementById("preview");
+	var select = document.getElementById("role");
+	var verb = document.getElementById('verb');
+	var note = document.getElementById('note');
+	var copied = document.getElementById('copied');
+
+	// First, checks if it isn't implemented yet.
+	if (!String.prototype.format) {
+		String.prototype.format = function() {
+			var args = arguments;
+			return this.replace(/{(\d+)}/g, function(match, number) { 
+      			return typeof args[number] != 'undefined'
+					? args[number]
+					: match;
+			});
+		};
+	}
+
+
+	function copy_dn(argument) {
+		argument.select();
+		document.execCommand('copy');
+		copied.innerHTML = "Copied!";
+		setTimeout(function(){copied.innerHTML = "";}, 3000);
+	}
+
+	function change_verb(argument) {
+		verb.innerHTML = killers[argument];
+		note.value = deathnotes[preview.value][0].format(argument, killers[argument]);
+		note.rows = deathnotes[preview.value][1];
+		copied.innerHTML = "";
+		for (var i=1; i<preview.options.length; i++) {
+			preview[i].innerHTML = preview[i].innerHTML.format(argument, killers[argument]);
+		}
+	}
+
+	function change_deathnote(argument) {
+		note.value = deathnotes[argument][0].format(select.value, killers[select.value]);
+		note.rows = deathnotes[argument][1];
+		copied.innerHTML = "";
+	}
+
+	for (var role in killers) {
+		option = document.createElement('option');
+		option.innerHTML = role;
+		option.value = role;
+		select.appendChild(option);
+	}
+
+	for (var dn in deathnotes) {
+		option = document.createElement('option');
+		option.innerHTML = deathnotes[dn][0].split("\n")[0].format(select.value, killers[select.value]);
+		option.value = dn;
+		preview.appendChild(option);
+	}
+
+	note.innerHTML = deathnotes[0][0].format(select.value, killers[select.value]);
+	note.rows = deathnotes[0][1];
+	verb.innerHTML = killers[select.value];
+</script>
+</body>
