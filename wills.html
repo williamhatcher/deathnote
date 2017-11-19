@@ -11,6 +11,13 @@
 	<title>ToS Last Will Generator</title>
 </head>
 <body>
+
+<h5>Temp controls</h5>
+<form>
+	<a role="button" class="btn btn-default" onclick="copy_will();">Copy</a>
+</form>
+<hr></hr>
+
 <h1>Town of Salem Last Will Generator</h1>
 <div class="btn-group" style="padding-bottom:1%;">
 	<a role="button" class="btn btn-default" href="./index.html">Death Notes</a>
@@ -37,8 +44,8 @@
 
 	will = []
 	notes = []
-	header = "http://deathnote.link\n\n"
-	generate_note()
+	footer = "\n\nhttp://deathnote.link"
+	generate_note();
 
 	// First, checks if it isn't implemented yet.
 	if (!String.prototype.format) {
@@ -52,33 +59,36 @@
 		};
 	}
 
-	function copy_will(argument) {
-		argument.select();
+	// Adds the footer to the end of the textbox copies then removes the footer.
+	function copy_will() {
+		note.value += footer
+		note.select();
 		document.execCommand('copy');
+		note.value = note.value.replace(footer, "");
 		copied.innerHTML = "Copied!";
 		setTimeout(function(){copied.innerHTML = "";}, 3000);
 	}
 
 	function update_will() {
-		will = note.value.split("\n").splice(2)
+		will = note.value.split("\n");
 	}
 
 	function generate_note() {
-		note.value = header + will.join("\n")
+		note.value = will.join("\n");
 	}
 
 	function add_to_will(string) {
-		will.push(string)
-		generate_note()
+		will.push(string);
+		generate_note();
 	}
 
 	function remove_from_will(index) {
-		will.splice(index,1)
-		generate_note()
+		will.splice(index,1);
+		generate_note();
 	}
 
 	note.onchange = function(){
-		update_will()
-		generate_note()
+		update_will();
+		generate_note();
 	}
 </script>
