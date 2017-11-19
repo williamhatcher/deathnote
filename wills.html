@@ -28,57 +28,17 @@
 	<input type="checkbox" id="inc_act" class="form-control" checked>
 </form>
 <h3>Tap or Click inside textbox to copy to clipboard. <span id="copied" class="text-success	"></span></h3>
-<textarea id="note" readonly="true" cols="57" onclick="copy_will(this)"></textarea>
+<textarea id="note" rows= 30 cols="57"></textarea>
 <script>
-	var wills = [
-		// Format:
-		// ["Text {0} ... {1}", "number of rows textbox should be"]
-		// {0} will be replaced with the role
-		// {1} will be replaced with the name
-		["{1} - {0}","14"]
-	];
-	var roles = {
-		// Format:
-		// "Role": "Night Action"
-		// Night Action should be "false" to not show N1, N2, etc.
-		// Trailing space will be added automaticly
-		"Investigator": "Investigated",
-		"Lookout": "Watched",
-		"Sheriff": "Interrogated",
-		"Spy": "",
-		"Jailor": "Executed",
-		"Vampire Hunter": "Staked",
-		"Veteran": "Shot",
-		"Vigilante": "Shot",
-		"Bodyguard": "Protected",
-		"Doctor": "Healed",
-		"Escort": "Blocked",
-		"Mayor": "false",
-		"Medium": "",
-		"Retributionist": "Revived",
-		"Transporter": " -",
-		// Disguiser missing because disguiser should disguise as someone else!
-		"Forger": "Forged",
-		"Framer": "Framed",
-		"Janitor": "Cleaned",
-		"Godfather": "Killed",
-		"Mafioso": "Killed",
-		"Blackmailer": "Blackmailed",
-		"Consigliere": " is",
-		"Consort": "Distracted",
-		"Survivor": "",
-		"Vampire": "Bit",
-		"Executioner": "Target:", // Special case: Will not include N1, etc. ever.
-		"Jester": "false",
-		"Witch": "Target: ()\n    Victim:",
-		"Arsonist": "Doused",
-		"Serial Killer": "Stabbed",
-		"Werewolf": "Mauled",
-	}
+
 	var preview = document.getElementById("preview");
-	var select = document.getElementById("role");
 	var note = document.getElementById('note');
 	var copied = document.getElementById('copied');
+
+	will = []
+	notes = []
+	header = "http://deathnote.link\n\n"
+	generate_note()
 
 	// First, checks if it isn't implemented yet.
 	if (!String.prototype.format) {
@@ -92,15 +52,6 @@
 		};
 	}
 
-	function night_num(action) {
-		var will_string = action + "\n";
-		for (var night = 1; night <= 10; night++) {
-			will_string += "N" + night + ": \n";
-		}
-		will_string += "http://deathnote.link";
-		return will_string;
-	}
-
 	function copy_will(argument) {
 		argument.select();
 		document.execCommand('copy');
@@ -108,37 +59,26 @@
 		setTimeout(function(){copied.innerHTML = "";}, 3000);
 	}
 
-	function change_verb(argument) {
-		verb.innerHTML = killers[argument];
-		note.value = deathnotes[preview.value][0].format(argument, killers[argument])
-		note.rows = deathnotes[preview.value][1];
-		copied.innerHTML = "";
-		for (var i=1; i<preview.options.length; i++) {
-			preview[i].innerHTML = preview[i].innerHTML.format(argument, killers[argument]);
-		}
+	function update_will() {
+		will = note.value.split("\n").splice(2)
 	}
 
-	function change_will(argument) {
-		note.value = deathnotes[argument][0].format(select.value, killers[select.value]);
-		note.rows = deathnotes[argument][1];
-		copied.innerHTML = "";
+	function generate_note() {
+		note.value = header + will.join("\n")
 	}
 
-	for (var role in roles) {
-		var option = document.createElement('option');
-		option.innerHTML = role;
-		option.value = role;
-		select.appendChild(option);
+	function add_to_will(string) {
+		will.push(string)
+		generate_note()
 	}
 
-	for (var dn in deathnotes) {
-		var option = document.createElement('option');
-		option.innerHTML = deathnotes[dn][0].split("\n")[0].format(select.value, killers[select.value]);
-		option.value = dn;
-		preview.appendChild(option);
+	function remove_from_will(index) {
+		will.splice(index,1)
+		generate_note()
 	}
 
-	note.innerHTML = deathnotes[0][0].format(select.value, killers[select.value])
-	note.rows = deathnotes[0][1];
-	verb.innerHTML = killers[select.value];
+	note.onchange = function(){
+		update_will()
+		generate_note()
+	}
 </script>
