@@ -37,7 +37,7 @@
 		// {1} will be replaced with the name
 		["{1} - {0}","14"]
 	];
-	var rolls = {
+	var roles = {
 		// Format:
 		// "Role": "Night Action"
 		// Night Action should be "false" to not show N1, N2, etc.
@@ -109,36 +109,36 @@
 	}
 
 	function change_verb(argument) {
-		verb.innerHTML = killers[argument];
-		note.value = deathnotes[preview.value][0].format(argument, killers[argument])
-		note.rows = deathnotes[preview.value][1];
+		verb.innerHTML = roles[argument];
+		note.value = wills[preview.value][0].format(argument, roles[argument])
+		note.rows = wills[preview.value][1];
 		copied.innerHTML = "";
 		for (var i=1; i<preview.options.length; i++) {
-			preview[i].innerHTML = preview[i].innerHTML.format(argument, killers[argument]);
+			preview[i].innerHTML = preview[i].innerHTML.format(argument, roles[argument]);
 		}
 	}
 
 	function change_will(argument) {
-		note.value = deathnotes[argument][0].format(select.value, killers[select.value]);
-		note.rows = deathnotes[argument][1];
+		note.value = wills[argument][0].format(select.value, roles[select.value]);
+		note.rows = wills[argument][1];
 		copied.innerHTML = "";
 	}
 
-	for (var role in killers) {
+	for (var role in roles) {
 		var option = document.createElement('option');
 		option.innerHTML = role;
 		option.value = role;
 		select.appendChild(option);
 	}
 
-	for (var dn in deathnotes) {
+	for (var dn in wills) {
 		var option = document.createElement('option');
-		option.innerHTML = deathnotes[dn][0].split("\n")[0].format(select.value, killers[select.value]);
+		option.innerHTML = wills[dn][0].split("\n")[0].format(select.value, roles[select.value]);
 		option.value = dn;
 		preview.appendChild(option);
 	}
 
-	note.innerHTML = deathnotes[0][0].format(select.value, killers[select.value])
-	note.rows = deathnotes[0][1];
-	verb.innerHTML = killers[select.value];
+	note.innerHTML = wills[0][0].format(select.value, roles[select.value])
+	note.rows = wills[0][1];
+	verb.innerHTML = roles[select.value];
 </script>
